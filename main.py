@@ -40,12 +40,36 @@ with open("capital_inicial.csv", 'r') as capital_csv:
 with open("cantidad_cuadrantes.csv", 'r') as cuadrantes_csv:
     reader = csv.reader(cuadrantes_csv)
     K = int(list(reader)[0][0])
+#Parametros
 
+P_j = {}
+Alfa = {}
+C_jiezt = {} 
+NE_jie = {}
+TD_jiez = {}
+F_ie = {}
+CI_kt = {}
+CN_k = {}
+G_jiezt = {} 
+NI_jK = {}
+TE = {}
+M = {}
+Beta_xe = {} 
+A_xe = {}
+ED_iez = {}
+E_j = {}
+EP = {}
+
+
+hh = 1000000
 
 #Conjuntos
-regiones = [j for j in range(1, len(alfa_j) + 1)] #Tipos de semillas
-electrolineras = [t for t in range(1, len(c_jt[1]) + 1)] #Meses del problema 
-dias = [k for k in range(1, K + 1)] #Cuadrantes del sector
+comunas = [i for i in range(1, hh + 1)] 
+electrolineras = [j for j in range(1, hh + 1)] 
+dias = [t for t in range(1, hh + 1)] 
+insumos = [k for k in range(1, hh + 1)]
+zonas = [e for e in range(1, hh + 1)]
+terrenos = [z for z in range(1, hh + 1)]
 
 
 #Generación del modelo de optimización:
@@ -56,41 +80,62 @@ modelo = Model("Tarea 2")
 
 #Variables
 
-x = modelo.addVars(Semillas, Cuadrantes, Meses, vtype = GRB.BINARY, name = "X" )
-y = modelo.addVars(Semillas, Cuadrantes, Meses, vtype = GRB.BINARY, name = "Y" )
-i = modelo.addVars(Meses, vtype = GRB.INTEGER, name = "I" )
-u = modelo.addVars(Semillas, Meses, vtype = GRB.INTEGER, name = "U" )
-w = modelo.addVars(Semillas, Meses, vtype = GRB.INTEGER, name = "W" )
+x = modelo.addVars(electrolineras, comunas, zonas, terrenos, dias, vtype = GRB.INTEGER, name = "X" )
+w = modelo.addVars(comunas, zonas, dias, vtype = GRB.INTEGER, name = "W" )
+y = modelo.addVars(electrolineras, comunas, zonas, terrenos, dias, vtype = GRB.BINARY, name = "Y" )
+n = modelo.addVars(dias, vtype = GRB.INTEGER, name = "N" )
+l = modelo.addVars(insumos, dias, vtype = GRB.INTEGER, name = "L" )
+i = modelo.addVars(insumos, dias, vtype = GRB.INTEGER, name = "I" )
+t = modelo.addVars(electrolineras, comunas, zonas, terrenos, dias, vtype = GRB.INTEGER, name = "T" )
+pn = modelo.addVars(comunas, zonas, dias, vtype = GRB.INTEGER, name = "PN" )
 
 #Función Objetivo
-modelo.setObjective(i[Meses[-1]], GRB.MAXIMIZE)
+modelo.setObjective(quicksum(quicksum(i[pn[i,e,dias[-1]]] for e in zonas) for i in comunas), GRB.MINIMIZE)
 modelo.update()
 
 
 #Restrcciones
 
-#Activación sembrado
-modelo.addConstrs((quicksum(y[j,k,l] for l in range(t, min(t + theta_j[j] - 1, Meses[-1]) + 1)) >= theta_j[j]*x[j,k,t] 
-                   for j in Semillas 
-                   for k in Cuadrantes
-                   for t in Meses), name = f"Activación sembrado")
+#No hay electrolineras terminadas el primer día
+modelo.addConstrs((t[j,i,e,z, 1] == 0 
+                   for j in electrolineras 
+                   for i in comunas 
+                   for e in zonas 
+                   for z in terrenos), name = f"No hay electrolineras terminadas el primer día")
 
 #Solo 1 sembrado por cuadrante
-modelo.addConstrs((quicksum(y[j,k,t] for j in Semillas) <= 1 
-                   for k in Cuadrantes 
-                   for t in Meses), 
-                   name = f"Solo 1 sembrado por cuadrante")
+modelo.addConstrs((t[j,i,e,z, t + TD_jiez[j,i,e,z]] == x[j,i,e,z,t] 
+                   for j in electrolineras 
+                   for i in comunas 
+                   for e in zonas
+                   for z in terrenos 
+                   for t in dias), 
+                   name = f"Electrolineras empezadas el día t son terminadas el día t + TD")
 
 #Inventario de dinero
-modelo.addConstrs((i[t-1] - quicksum(c_jt[j][t]*w[j,t] for j in Semillas) + 
-                   quicksum(quicksum(x[j,k,t - theta_j[j]] * lambda_j[j] * beta_jt[j][t] for k in Cuadrantes) 
-                            for j in Semillas if t - theta_j[j] >= 1) == i[t] 
-                            for t in Meses[1:]), 
-                            name = f"Inventario de dinero")
+
+modelo.addConstrs((n[1] == Alfa - quicksum(quicksum(quicksum(quicksum(C_jiezt[j][i][e][z][1]*x[j,i,e,z,1] 
+                                                                      for j in electrolineras)
+                                                                      for z in terrenos) 
+                                                                      for e in zonas) 
+                                                                      for i in comunas) 
+                                                                      - quicksum(CI_kt[k][1]*l[k,1] 
+                                                                                 for k in insumos)), 
+                            name = f"Condición borde inventario de dinero")
 
 #Condición borde inventario de dinero
-modelo.addConstr((gammma_ - quicksum(c_jt[j][1]*w[j,1] for j in Semillas) == i[1]), 
-                 name = f"Condición borde inventario de dinero")
+modelo.addConstr((n[t] == n[t-1] + quicksum(quicksum(quicksum(quicksum(C_jiezt[j][i][e][z][1]*x[j,i,e,z,1] 
+                                                                      for j in electrolineras)
+                                                                      for z in terrenos) 
+                                                                      for e in zonas) 
+                                                                      for i in comunas) 
+                                                                      - quicksum(CI_kt[k][1]*l[k,1] 
+                                                                                 for k in insumos)),
+                 name = f"Inventario de dinero")
+
+#Hasta aca esta listo, falta arreglar esta que esta aca arriba
+
+
 
 #Inventario de semillas
 modelo.addConstrs((u[j,t-1] + alfa_j[j]*w[j,t] - quicksum(x[j,k,t] for k in Cuadrantes) == u[j,t] 
