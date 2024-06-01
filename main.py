@@ -110,9 +110,9 @@ modelo.addConstrs((t[j,i,e,z, t + TD_jiez[j,i,e,z]] == x[j,i,e,z,t]
                    for i in comunas 
                    for e in zonas
                    for z in terrenos 
-                   for t in dias), 
+                   for t in dias[:dias[-1] - TD_jiez[j,i,e,z]]), 
                    name = f"Electrolineras empezadas el día t son terminadas el día t + TD")
-
+#lo tendremos en cuenta
 
 # 3era: Condición borde inventario de dinero
 modelo.addConstrs((n[1] == Alfa - quicksum(quicksum(quicksum(quicksum(C_jiezt[j][i][e][z][1]*x[j,i,e,z,1] 
@@ -126,7 +126,7 @@ modelo.addConstrs((n[1] == Alfa - quicksum(quicksum(quicksum(quicksum(C_jiezt[j]
 
 
 # 4ta: Inventario de dinero
-modelo.addConstr((n[t] == n[t-1] + quicksum(quicksum(quicksum(quicksum(G_jiezt[j][i][e][z][t]*quicksum(t[j,i,e,z,tx] for tx in dias[: t]) - C_jiezt[j][i][e][z][t]*x[j,i,e,z,t]
+modelo.addConstrs((n[t] == n[t-1] + quicksum(quicksum(quicksum(quicksum(G_jiezt[j][i][e][z][t]*quicksum(t[j,i,e,z,tx] for tx in dias[: t]) - C_jiezt[j][i][e][z][t]*x[j,i,e,z,t]
                                                                        for z in terrenos)
                                                                        for e in zonas) 
                                                                        for i in comunas ) 
@@ -148,7 +148,7 @@ modelo.addConstrs((i[k,1] == l[k,1] - quicksum(quicksum(quicksum(quicksum(NI_jK[
 
 
 # 6ta: Inventario de insumos
-modelo.addConstr((i[k,t] == i[k,t - 1] + l[k,t] - quicksum(quicksum(quicksum(quicksum(NI_jK[j][k]*x[j,i,e,z,t] 
+modelo.addConstrs((i[k,t] == i[k,t - 1] + l[k,t] - quicksum(quicksum(quicksum(quicksum(NI_jK[j][k]*x[j,i,e,z,t] 
                                                                       for z in terrenos)
                                                                       for e in zonas) 
                                                                       for i in comunas ) 
@@ -166,15 +166,15 @@ modelo.addConstrs((CN_k[k] >= i[k,t]
 
 
 # 8va: 
-modelo.addConstr((pn[i,e,1] == F_ie[i][e]*EP - quicksum(quicksum(P_j[j]*x[j,i,e,z,1] for z in terrenos) for j in electrolineras) 
+modelo.addConstrs((pn[i,e,1] == F_ie[i][e]*EP - quicksum(quicksum(P_j[j]*x[j,i,e,z,1] for z in terrenos) for j in electrolineras) 
                   - quicksum(quicksum(quicksum(A_xe[i,e,h]*P_j[j]*x[j,i,e,z,1] for z in terrenos) for h in zonas) for j in electrolineras) 
                   for i in comunas
                   for e in zonas),
                   name = f"")
 
-
+#Acordarse de definir en el A que e = h es 0
 # 9na:
-modelo.addConstr((pn[i,e,t] == pn[i,e,t-1] - quicksum(quicksum(quicksum(P_j[j]*x[j,i,e,z,tx] for z in terrenos) for tx in dias[:t]) for j in electrolineras) 
+modelo.addConstrs((pn[i,e,t] == pn[i,e,t-1] - quicksum(quicksum(quicksum(P_j[j]*x[j,i,e,z,tx] for z in terrenos) for tx in dias[:t]) for j in electrolineras) 
                   - quicksum(quicksum(quicksum(quicksum(A_xe[i,e,h]*P_j[j]*x[j,i,e,z,tx] for z in terrenos) for h in zonas) for tx in dias[:t]) for j in electrolineras) 
                   for i in comunas
                   for e in zonas
@@ -212,13 +212,13 @@ modelo.addConstrs((w[i,e,t] == quicksum(NE_jie[j][i][e][t]*(quicksum(quicksum(x[
 
 
 # 13va:
-modelo.addConstrs((TE == quicksum(quicksum(w[i,e,t] for e in zonas) for i in comunas)
+modelo.addConstrs((TE >= quicksum(quicksum(w[i,e,t] for e in zonas) for i in comunas)
                    for t in dias),
                    name = f"")
 
 
 # 14va:
-modelo.addConstrs((ED_iez[i][e][z] == quicksum(quicksum(x[j,i,e,z,tx] for j in electrolineras) for tx in dias[:t])
+modelo.addConstrs((ED_iez[i][e][z] >= quicksum(quicksum(E_j[j]*x[j,i,e,z,tx] for j in electrolineras) for tx in dias[:t])
                   for e in comunas
                   for z in terrenos
                   for t in dias),
