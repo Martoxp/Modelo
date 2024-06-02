@@ -1,5 +1,14 @@
 Pj = {1:11,2:50,3:150}
 
+
+
+
+lista = ["precio_primer_anual", "precio_segundo_anual"]
+
+c_jt = {j: {i: {e: {z: {t: lista[(t-1)//12] for t in dias} for z in terrenos} for e in zonas} for i in comuna} for j in range(1, len(data_costo) + 1)}
+
+
+
 #Alpha = 
 
 Cjiezt = {
