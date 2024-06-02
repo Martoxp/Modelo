@@ -42,23 +42,42 @@ with open("cantidad_cuadrantes.csv", 'r') as cuadrantes_csv:
     K = int(list(reader)[0][0])
 #Parametros
 
-P_j = {}
-Alfa = {}
-C_jiezt = {} 
-NE_jie = {}
-TD_jiez = {}
-F_ie = {}
-CI_kt = {}
-CN_k = {}
-G_jiezt = {} 
-NI_jK = {}
-TE = {}
+P_j = {1: 199,2: 142,3: 128} #Miedo cual potencia?
+#Tipo 1 entrega: 2 cargadores maxima potencia (50-149kW)
+#Tipo 2 entrega: 4 cargadores media potencia (22-49kW) #Sacar promedio y sumar cantidad???
+#Tipo 3 entrega: 8 cargadores baja potencia (11-21kW)
+Alfa = {5000000000} #Primer informe 5000mil millones
+
+C_jiezt = {} #la muerte chaval
+
+NE_jie = {} # falta
+
+TD_jiez = {} #falta
+
+F_ie = {} #Excel juanisimo, Definir comunas????
+
+CI_kt = {} #Costo insumos en excel y aplicar su variacion del tiempo con diccionarios
+
+CN_k = {} #Falta
+
+G_jiezt = {} #Paper con excel con cantidad de vehiculos electricos en comuna
+
+NI_jK = {}#falta¿
+
+TE = {4560}#4560 trabajdores en promedio
+
 M = 1000000000000000
-Beta_xe = {} 
-A_xe = {}
-ED_iez = {}
-E_j = {}
-EP = {}
+
+Beta_xe = {} #falta
+
+
+A_xe = {}#pura matriz de zonas
+
+ED_iez = {} #Suelo vacante por municipio¿
+
+E_j = {300} #Espacio que requiere una electroliner en m^2
+
+EP = {18.8} #Energia promedio que necesita un auto electrico en kW/km
 
 
 hh = 1000000
@@ -70,6 +89,7 @@ dias = [t for t in range(1, hh + 1)]
 insumos = [k for k in range(1, hh + 1)]
 zonas = [e for e in range(1, hh + 1)]
 terrenos = [z for z in range(1, hh + 1)]
+
 
 
 #Generación del modelo de optimización:
@@ -266,7 +286,7 @@ modelo.addConstrs((pn[i,e,t] >= 0
 
 modelo.update()
 #modelo.display()
-modelo.optimize() 
+#modelo.optimize()
 
 #Valor optimo de la función
 print(f"\nEl valor optimo del modelo es: {modelo.ObjVal} pesos\n")
