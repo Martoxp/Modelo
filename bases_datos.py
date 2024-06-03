@@ -18,7 +18,7 @@ with open("Flujos.csv", 'r') as flujos_csv:
         comunas_.append(data_flujos[i].pop(0))
 #Los datos en esta lista vienen ordenados como zona {1,2,3,4,5,6},{7,8,9...etc}
 
-F_ie = {i : {e : float(data_flujos[i - 1][e - 1]) for e in range(1, len(data_flujos[i - 1]) + 1)} for i in range(1, len(comunas_) + 1)}
+F_ie = {i : {e : int(data_flujos[i - 1][e - 1]) for e in range(1, len(data_flujos[i - 1]) + 1)} for i in range(1, len(comunas_) + 1)}
 
 with open("Potencia.csv", 'r') as potencia_csv:
     reader = csv.reader(potencia_csv)
@@ -49,12 +49,12 @@ with open("Espacio_electrolinera.csv", 'r') as espacio_e_csv:
 E_j = {j : int(data_espacio_e[j - 1][0]) for j in range(1, len(electrolineras_) + 1)}
 
 
-print(P_j)
+print("P_j:", P_j)
 #Tipo 1 entrega: 2 cargadores maxima potencia (50-79kW)
 #Tipo 2 entrega: 4 cargadores media potencia (22-49kW) #Sacar promedio y sumar cantidad???
 #Tipo 3 entrega: 8 cargadores baja potencia (11-21kW)
 
-print(Alfa) #Primer informe 5000mil millones
+print("Alfa:",Alfa) #Primer informe 5000mil millones
 
 C_jiezt = {} #la muerte chaval
 
@@ -62,25 +62,25 @@ NE_jie = {} # falta
 
 TD_jiez = {} #falta
 
-print(F_ie)  #Excel juanisimo, Definir comunas????
+print("Flujos:",F_ie)  #Excel juanisimo, Definir comunas????
 
 CI_kt = {} #Costo insumos en excel y aplicar su variacion del tiempo con diccionarios
 
 CN_k = {} #Falta
 
-print(NI_jK) #falta¿
+print("Necesidad:",NI_jK) #falta¿
 
-print(TE) #4560 trabajdores en promedio
+print("Trabajadores de empresa:",TE) #4560 trabajdores en promedio
 
-print(M) #Big M
+print("Big M:", M) #Big M
 
 A_he = {}#pura matriz de zonas
 
 ED_iez = {} #Suelo vacante por municipio¿
 
-print(E_j) #Espacio que requiere una electroliner en m^2
+print("Espacio de electrolineras:", E_j) #Espacio que requiere una electroliner en m^2
 
-print(EP) #Energia promedio que necesita un auto electrico en kW/km
+print("Energía promedio autos:", EP) #Energia promedio que necesita un auto electrico en kW/km
 
 
 
