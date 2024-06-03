@@ -16,6 +16,7 @@ with open("Flujos.csv", 'r') as flujos_csv:
     comunas_ = []
     for i in range(len(data_flujos)):
         comunas_.append(data_flujos[i].pop(0))
+#Los datos en esta lista vienen ordenados como zona {1,2,3,4,5,6},{7,8,9...etc}
 
 F_ie = {i : {e : float(data_flujos[i - 1][e - 1]) for e in range(1, len(data_flujos[i - 1]) + 1)} for i in range(1, len(comunas_) + 1)}
 
@@ -25,6 +26,7 @@ with open("Potencia.csv", 'r') as potencia_csv:
     electrolineras_ = []
     for i in range(len(data_potencia)):
         electrolineras_.append(data_potencia[i].pop(0))
+
 
 P_j = {j : int(data_potencia[j - 1][0]) for j in range(1, len(electrolineras_) + 1)} 
 
