@@ -1,7 +1,7 @@
 #Modelo grupo 35
-
 import csv
 import pandas as pd
+from bases_datos import *
 
 #Parametros
 with open("capacidad_por_saco.csv", 'r') as capacidad_csv:
@@ -42,49 +42,11 @@ with open("cantidad_cuadrantes.csv", 'r') as cuadrantes_csv:
     K = int(list(reader)[0][0])
 #Parametros
 
-P_j = {1: 199,2: 142,3: 128} #Miedo cual potencia?
-#Tipo 1 entrega: 2 cargadores maxima potencia (50-149kW)
-#Tipo 2 entrega: 4 cargadores media potencia (22-49kW) #Sacar promedio y sumar cantidad???
-#Tipo 3 entrega: 8 cargadores baja potencia (11-21kW)
-Alfa = {5000000000} #Primer informe 5000mil millones
-
-C_jiezt = {} #la muerte chaval
-
-NE_jie = {} # falta
-
-TD_jiez = {} #falta
-
-F_ie = {} #Excel juanisimo, Definir comunas????
-
-CI_kt = {} #Costo insumos en excel y aplicar su variacion del tiempo con diccionarios
-
-CN_k = {} #Falta
-
-G_jiezt = {} #Paper con excel con cantidad de vehiculos electricos en comuna
-
-NI_jK = {}#falta¿
-
-TE = {4560}#4560 trabajdores en promedio
-
-M = 1000000000000000
-
-Beta_xe = {} #falta
-
-
-A_xe = {}#pura matriz de zonas
-
-ED_iez = {} #Suelo vacante por municipio¿
-
-E_j = {300} #Espacio que requiere una electroliner en m^2
-
-EP = {18.8} #Energia promedio que necesita un auto electrico en kW/km
-
-
 hh = 1000000
 
 #Conjuntos
-comunas = [i for i in range(1, hh + 1)] 
-electrolineras = [j for j in range(1, hh + 1)] 
+comunas = [i for i in range(1, len(comunas_) + 1)] 
+electrolineras = [j for j in range(1, len(electrolineras_) + 1)] 
 dias = [t for t in range(1, hh + 1)] 
 insumos = [k for k in range(1, hh + 1)]
 zonas = [e for e in range(1, hh + 1)]
@@ -146,7 +108,7 @@ modelo.addConstrs((n[1] == Alfa - quicksum(quicksum(quicksum(quicksum(C_jiezt[j]
 
 
 # 4ta: Inventario de dinero
-modelo.addConstrs((n[t] == n[t-1] + quicksum(quicksum(quicksum(quicksum(G_jiezt[j][i][e][z][t]*quicksum(t[j,i,e,z,tx] for tx in dias[: t]) - C_jiezt[j][i][e][z][t]*x[j,i,e,z,t]
+modelo.addConstrs((n[t] == n[t-1] - quicksum(quicksum(quicksum(quicksum(C_jiezt[j][i][e][z][t]*x[j,i,e,z,t]
                                                                        for z in terrenos)
                                                                        for e in zonas) 
                                                                        for i in comunas ) 
