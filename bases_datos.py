@@ -1,6 +1,10 @@
 import csv
 
-zonas_ = {}
+#Zona de cada comuna
+zonas_ = {"Peñalolen":[1,2,3,4,5,6],"LaReina":[7,8,9,10,11],"Ñuñoa":[12,13,14,15,16],"Macul":[17,18,19,20]}
+#Numero comuna
+ncomuna = {"Peñalolen":1,"LaReina":2,"Ñuñoa":3,"Macul":4}
+
 
 Alfa = 5000000000
 
