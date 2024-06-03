@@ -30,7 +30,7 @@ P_j = {i : int(data_potencia[i - 1][0]) for i in range(1, len(electrolineras_) +
 
 
 P_j
-#Tipo 1 entrega: 2 cargadores maxima potencia (50-149kW)
+#Tipo 1 entrega: 2 cargadores maxima potencia (50-79kW)
 #Tipo 2 entrega: 4 cargadores media potencia (22-49kW) #Sacar promedio y sumar cantidad???
 #Tipo 3 entrega: 8 cargadores baja potencia (11-21kW)
 
