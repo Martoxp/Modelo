@@ -17,6 +17,7 @@ for n in ncomuna.keys():
             lista.append(z)
         cantidad_terrenos = cantidad_terrenos + num
         terrenos_[ncomuna[n]][e] = lista
+print(terrenos_)
 
 Alfa = 5000000000
 
@@ -79,8 +80,6 @@ with open("Necesidad_trabajadores.csv", 'r') as necesidad_t_csv:
     for i in range(len(data_necesidad_t)):
         data_necesidad_t[i].pop(0)
 NE_j = {j : int(data_necesidad_t[j - 1][0]) for j in range(1, len(data_necesidad_t) + 1)} 
-
-
 
 ED_iez = {}
 

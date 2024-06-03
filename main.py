@@ -8,10 +8,11 @@ comunas = [i for i in range(1, len(comunas_) + 1)]
 electrolineras = [j for j in range(1, len(electrolineras_) + 1)] 
 dias = [t for t in range(1, 121)] 
 insumos = [k for k in range(1, len(insumos_) + 1)]
-zonas = [e for e in range(1, 2 + 1)]
-terrenos = [z for z in range(1, 2 + 1)]
+zonas = [e for i in comunas_ for e in zonas_[i]]
+terrenos = [z for i in comunas_ for e in zonas_[i] for z in terrenos_[ncomuna[i]][e]]
 
-
+arcos = [(j,ncomuna[i],e,z,t) for j in electrolineras for i in comunas_ for e in zonas_[i] for z in terrenos_[ncomuna[i]][e] for t in dias]
+arcos2 = [(ncomuna[i],e,t) for i in comunas_ for e in zonas_[i] for t in dias]
 
 #Generación del modelo de optimización:
 
@@ -21,13 +22,13 @@ modelo = Model("Proyecto")
 
 #Variables
 
-x = modelo.addVars(electrolineras, comunas, zonas, terrenos, dias, vtype = GRB.INTEGER, name = "X" )
+x = modelo.addVars(arcos, vtype = GRB.INTEGER, name = "X" )
 w = modelo.addVars(comunas, zonas, dias, vtype = GRB.INTEGER, name = "W" )
-y = modelo.addVars(electrolineras, comunas, zonas, terrenos, dias, vtype = GRB.BINARY, name = "Y" )
+y = modelo.addVars(arcos, vtype = GRB.BINARY, name = "Y" )
 n = modelo.addVars(dias, vtype = GRB.INTEGER, name = "N" )
 l = modelo.addVars(insumos, dias, vtype = GRB.INTEGER, name = "L" )
 i = modelo.addVars(insumos, dias, vtype = GRB.INTEGER, name = "I" )
-t = modelo.addVars(electrolineras, comunas, zonas, terrenos, dias, vtype = GRB.INTEGER, name = "T" )
+t = modelo.addVars(arcos, vtype = GRB.INTEGER, name = "T" )
 pn = modelo.addVars(comunas, zonas, dias, vtype = GRB.INTEGER, name = "PN" )
 
 #Función Objetivo
@@ -42,7 +43,7 @@ modelo.addConstrs((t[j,i,e,z, 1] == 0
                    for j in electrolineras 
                    for i in comunas 
                    for e in zonas_[i] 
-                   for z in terrenos), name = f"No hay electrolineras terminadas el primer día")
+                   for z in terrenos[ncomuna[i]][e]), name = f"No hay electrolineras terminadas el primer día")
 
 
 # 2da: Solo 1 sembrado por cuadrante
@@ -207,7 +208,7 @@ modelo.addConstrs((pn[i,e,t] >= 0
                    for t in dias))
 
 modelo.update()
-#modelo.display()
+modelo.display()
 #modelo.optimize()
 
 #Valor optimo de la función
