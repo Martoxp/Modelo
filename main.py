@@ -211,8 +211,7 @@ modelo.addConstrs((pn[i,e,t] >= 0
                    for t in dias))
 
 modelo.update()
-modelo.display()
-#modelo.optimize()
+modelo.optimize()
 
 #Valor optimo de la función
 print(f"\nEl valor optimo del modelo es: {modelo.ObjVal} pesos\n")
