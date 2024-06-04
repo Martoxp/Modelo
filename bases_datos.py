@@ -19,7 +19,6 @@ for n in ncomuna.keys():
             lista.append(z)
         cantidad_terrenos = cantidad_terrenos + num
         terrenos_[ncomuna[n]][e] = lista
-print(terrenos_)
 
 Alfa = 5000000000
 
@@ -123,7 +122,6 @@ Fi = [0.8 , 1.2 , 1.1 , 1]
 Inflacion = 1.03
 
 C_jit = {j: {i: {t : int(Cj[j - 1]*Inflacion*(1.03**((t-1)//12))) for t in range(1,121)} for i in range(1, len(comunas_) + 1)} for j in range(1, len(electrolineras_) + 1)}
-print(C_jit)
 
 
 Precio_base_k = [200000,500000,100000,2000000,300000,100000,3000000,17000000,50000000,50000,500000,1500000,500000,200000,75000]

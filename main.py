@@ -61,18 +61,16 @@ modelo.addConstrs((tt[j,i,e,z, t + TD_j[j]] == x[j,i,e,z,t]
                    for z in terrenos_[i][e] 
                    for t in dias[:dias[-1] - TD_j[j]]), 
                    name = f"Electrolineras empezadas el día t son terminadas el día t + TD")
-#lo tendremos en cuenta
 
 # 3era: Condición borde inventario de dinero
-modelo.addConstrs((n[1] == Alfa - quicksum(quicksum(quicksum(quicksum(C_jit[j][i][1]*x[j,i,e,z,1] 
+modelo.addConstr((n[1] == Alfa - quicksum(quicksum(quicksum(quicksum(C_jit[j][i][1]*x[j,i,e,z,1] 
                                                                       for z in terrenos_[i][e])
                                                                       for e in zonas[i-1]) 
                                                                       for i in comunas) 
                                                                       for j in electrolineras) 
                                                                       - quicksum(CI_kt[k][1]*l[k,1] 
-                                                                                 for k in insumos)), 
-                            name = f"Condición borde inventario de dinero")
-
+                                                                                 for k in insumos)) 
+                            ,name = f"Condición borde inventario de dinero")
 
 # 4ta: Inventario de dinero
 modelo.addConstrs((n[t] == n[t-1] - quicksum(quicksum(quicksum(quicksum(C_jit[j][i][t]*x[j,i,e,z,t]
@@ -84,7 +82,6 @@ modelo.addConstrs((n[t] == n[t-1] - quicksum(quicksum(quicksum(quicksum(C_jit[j]
                                                                                   for k in insumos) 
                                                                                   for t in dias[1:]),
                  name = f"Inventario de dinero")
-
 
 # 5ta: Condición borde inventario de insumos
 modelo.addConstrs((i[k,1] == l[k,1] - quicksum(quicksum(quicksum(quicksum(NI_jK[j][k]*x[j,i,e,z,1] 
@@ -134,8 +131,7 @@ modelo.addConstrs((x[j,i,e,z,t]  <= M*y[j,i,e,z,t]
 
 
 # 10ma: 
-modelo.addConstrs((w[i,e,t] == quicksum(NE_j[j][i][e][t]*(quicksum(quicksum(x[j,i,e,z,tx] - tt[j,i,e,z,tx] for z in terrenos_[i][e])) for tx in dias[:t]) 
-                                        for j in electrolineras) 
+modelo.addConstrs((w[i,e,t] == quicksum(NE_j[j]*quicksum(quicksum(x[j,i,e,z,tx] - tt[j,i,e,z,tx] for z in terrenos_[i][e]) for tx in dias[:t]) for j in electrolineras) 
                                         for i in comunas 
                                         for e in zonas[i-1]
                                         for t in dias),
@@ -158,7 +154,7 @@ modelo.addConstrs((ED_iez[i][e][z] >= quicksum(quicksum(E_j[j]*x[j,i,e,z,tx] for
 
 # 13va:
 modelo.addConstrs((pn[i,e,1] == F_ie[i][e]*EP - quicksum(quicksum(P_j[j]*x[j,i,e,z,1] for z in terrenos_[i][e]) for j in electrolineras) 
-                  - quicksum(quicksum(quicksum(A_eh[i,e,h]*P_j[j]*x[j,i,e,z,1] for z in terrenos_[i][e]) for h in zonas[i-1]) for j in electrolineras) 
+                  - quicksum(quicksum(quicksum(A_eh[e][h]*P_j[j]*x[j,i,e,z,1] for z in terrenos_[i][e]) for h in zonas[i-1]) for j in electrolineras) 
                   for i in comunas
                   for e in zonas[i-1]),
                   name = f"")
@@ -167,7 +163,7 @@ modelo.addConstrs((pn[i,e,1] == F_ie[i][e]*EP - quicksum(quicksum(P_j[j]*x[j,i,e
 
 # 14va:
 modelo.addConstrs((pn[i,e,t] == pn[i,e,t-1] - quicksum(quicksum(quicksum(P_j[j]*x[j,i,e,z,tx] for z in terrenos_[i][e]) for tx in dias[:t]) for j in electrolineras) 
-                  - quicksum(quicksum(quicksum(quicksum(A_eh[i,e,h]*P_j[j]*x[j,i,e,z,tx] for z in terrenos_[i][e]) for h in zonas[i-1]) for tx in dias[:t]) for j in electrolineras) 
+                  - quicksum(quicksum(quicksum(quicksum(A_eh[e][h]*P_j[j]*x[j,i,e,z,tx] for z in terrenos_[i][e]) for h in zonas[i-1]) for tx in dias[:t]) for j in electrolineras) 
                   for i in comunas
                   for e in zonas[i-1]
                   for t in dias[1:]),
