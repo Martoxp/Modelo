@@ -128,8 +128,14 @@ print(C_jit)
 
 Precio_base_k = [200000,500000,100000,2000000,300000,100000,3000000,17000000,50000000,50000,500000,1500000,500000,200000,75000]
 Variacion_por_estacion = [1.25,0.75,0.75,1]
-
-
+CI_kt = {}
+for k in insumos_:
+    CI_kt[k] = {}
+    restar = 0
+    for t in range(1, 121):
+        if t > 12:
+            restar = 12*((t-1)//12)
+        CI_kt[k][t] = Variacion_por_estacion[int((t - 1 - restar)//3)]*Precio_base_k[k-1]*(Inflacion**((t-1)//12))
 
 print("Potencia de electrolineras:", P_j)
 #Tipo 1 entrega: 2 cargadores maxima potencia (50-79kW)
@@ -145,7 +151,7 @@ print("Necesidad de trabajadores:",NE_j) # falta
 print("Tiempo demora:",TD_j) #falta
 
 print("Flujos:",F_ie)  #Excel juanisimo, Definir comunas????
-CI_kt = {}
+
 print("Costos Insumos:",CI_kt) #Costo insumos en excel y aplicar su variacion del tiempo con diccionarios
 
 print("CN_k",CN_k) #Falta

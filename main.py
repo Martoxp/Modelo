@@ -37,7 +37,7 @@ y = modelo.addVars(arcos, vtype = GRB.BINARY, name = "Y" )
 n = modelo.addVars(dias, vtype = GRB.INTEGER, name = "N" )
 l = modelo.addVars(insumos, dias, vtype = GRB.INTEGER, name = "L" )
 i = modelo.addVars(insumos, dias, vtype = GRB.INTEGER, name = "I" )
-t = modelo.addVars(arcos, vtype = GRB.INTEGER, name = "T" )
+tt = modelo.addVars(arcos, vtype = GRB.INTEGER, name = "T" )
 pn = modelo.addVars(arcos2, vtype = GRB.INTEGER, name = "PN" )
 
 #Función Objetivo
@@ -47,14 +47,14 @@ modelo.update()
 #Restrcciones
 
 # 1er: No hay electrolineras terminadas el primer día
-modelo.addConstrs((t[j,i,e,z, 1] == 0 
+modelo.addConstrs((tt[j,i,e,z, 1] == 0 
                    for j in electrolineras 
                    for i in comunas 
                    for e in zonas[i-1] 
                    for z in terrenos_[i][e]), name = f"No hay electrolineras terminadas el primer día")
 
 # 2da: Solo 1 sembrado por cuadrante
-modelo.addConstrs((t[j,i,e,z, t + TD_j[j]] == x[j,i,e,z,t] 
+modelo.addConstrs((tt[j,i,e,z, t + TD_j[j]] == x[j,i,e,z,t] 
                    for j in electrolineras 
                    for i in comunas 
                    for e in zonas[i-1] 
@@ -134,7 +134,7 @@ modelo.addConstrs((x[j,i,e,z,t]  <= M*y[j,i,e,z,t]
 
 
 # 10ma: 
-modelo.addConstrs((w[i,e,t] == quicksum(NE_j[j][i][e][t]*(quicksum(quicksum(x[j,i,e,z,tx] - t[j,i,e,z,tx] for z in terrenos_[i][e])) for tx in dias[:t]) 
+modelo.addConstrs((w[i,e,t] == quicksum(NE_j[j][i][e][t]*(quicksum(quicksum(x[j,i,e,z,tx] - tt[j,i,e,z,tx] for z in terrenos_[i][e])) for tx in dias[:t]) 
                                         for j in electrolineras) 
                                         for i in comunas 
                                         for e in zonas[i-1]
@@ -202,7 +202,7 @@ modelo.addConstrs((i[k,t] >= 0
                    for k in insumos
                    for t in dias))
 
-modelo.addConstrs((t[j,i,e,z,t] >= 0 
+modelo.addConstrs((tt[j,i,e,z,t] >= 0 
                    for j in electrolineras
                    for i in comunas
                    for e in zonas[i-1] 
