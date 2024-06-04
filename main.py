@@ -17,7 +17,7 @@ for j in electrolineras:
         for e in zonas[i-1]:
             for z in terrenos_[i][e]:
                 for t in dias:
-                    arcos.append((j,i,zonas[i-1][e-1],z,t))
+                    arcos.append((j,i,e,z,t))
 
 arcos2 = [(i,e,t) for i in comunas for e in zonas[i - 1] for t in dias]
 #Generación del modelo de optimización:
@@ -47,7 +47,7 @@ modelo.update()
 #Restrcciones
 
 # 1er: No hay electrolineras terminadas el primer día
-modelo.addConstrs((t[j,i,zonas[i-1][e - 1],z, 1] == 0 
+modelo.addConstrs((t[j,i,e,z, 1] == 0 
                    for j in electrolineras 
                    for i in comunas 
                    for e in zonas[i-1] 
@@ -64,7 +64,7 @@ modelo.addConstrs((t[j,i,e,z, t + TD_j[j]] == x[j,i,e,z,t]
 #lo tendremos en cuenta
 
 # 3era: Condición borde inventario de dinero
-modelo.addConstrs((n[1] == Alfa - quicksum(quicksum(quicksum(quicksum(C_jiezt[j][i][e][z][1]*x[j,i,e,z,1] 
+modelo.addConstrs((n[1] == Alfa - quicksum(quicksum(quicksum(quicksum(C_jit[j][i][1]*x[j,i,e,z,1] 
                                                                       for z in terrenos_[i][e])
                                                                       for e in zonas[i-1]) 
                                                                       for i in comunas) 
@@ -75,7 +75,7 @@ modelo.addConstrs((n[1] == Alfa - quicksum(quicksum(quicksum(quicksum(C_jiezt[j]
 
 
 # 4ta: Inventario de dinero
-modelo.addConstrs((n[t] == n[t-1] - quicksum(quicksum(quicksum(quicksum(C_jiezt[j][i][e][z][t]*x[j,i,e,z,t]
+modelo.addConstrs((n[t] == n[t-1] - quicksum(quicksum(quicksum(quicksum(C_jit[j][i][t]*x[j,i,e,z,t]
                                                                        for z in terrenos_[i][e])
                                                                        for e in zonas[i-1]) 
                                                                        for i in comunas ) 

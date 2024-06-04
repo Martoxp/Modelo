@@ -119,13 +119,19 @@ CN_k = {k : int(data_capacidad[k - 1][0]) for k in insumos_}
 Cj = [71991759,56644034,40138535]
 #Factor Comunal Arbitrario
 Fi = [0.8 , 1.2 , 1.1 , 1]
-#Factor Anual
-Tt = 1.03
-C_jit = {j: {i: {t : Cj[j - 1]*Fi[i](1.03**((t)//12)) for t in range(1,121)} for i in range(1, len(comunas_) + 1)} for j in range(1, len(electrolineras_) + 1)}
+#Factor Anual de infiacion
+Inflacion = 1.03
+
+C_jit = {j: {i: {t : int(Cj[j - 1]*Inflacion*(1.03**((t-1)//12))) for t in range(1,121)} for i in range(1, len(comunas_) + 1)} for j in range(1, len(electrolineras_) + 1)}
 print(C_jit)
 
 
+Precio_base_k = [200000,500000,100000,2000000,300000,100000,3000000,17000000,50000000,50000,500000,1500000,500000,200000,75000]
+Variacion_por_estacion = [1.25,0.75,0.75,1]
 
+
+
+print("Potencia de electrolineras:", P_j)
 #Tipo 1 entrega: 2 cargadores maxima potencia (50-79kW)
 #Tipo 2 entrega: 4 cargadores media potencia (22-49kW) #Sacar promedio y sumar cantidad???
 #Tipo 3 entrega: 8 cargadores baja potencia (11-21kW)
@@ -139,8 +145,8 @@ print("Necesidad de trabajadores:",NE_j) # falta
 print("Tiempo demora:",TD_j) #falta
 
 print("Flujos:",F_ie)  #Excel juanisimo, Definir comunas????
-
-CI_kt = {} #Costo insumos en excel y aplicar su variacion del tiempo con diccionarios
+CI_kt = {}
+print("Costos Insumos:",CI_kt) #Costo insumos en excel y aplicar su variacion del tiempo con diccionarios
 
 print("CN_k",CN_k) #Falta
 
