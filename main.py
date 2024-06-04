@@ -213,5 +213,3 @@ modelo.addConstrs((pn[i,e,t] >= 0
 modelo.update()
 modelo.optimize()
 
-#Valor optimo de la función
-print(f"\nEl valor optimo del modelo es: {modelo.ObjVal} pesos\n")

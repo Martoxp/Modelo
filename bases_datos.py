@@ -19,13 +19,13 @@ for n in ncomuna.keys():
             lista.append(z)
         cantidad_terrenos = cantidad_terrenos + num
         terrenos_[ncomuna[n]][e] = lista
-
+#Capital Inicial
 Alfa = 5000000000
-
+#Big M
 M = 1000000000000000
-
+#Trabajadores de la empresa
 TE = 700
-
+#Energia Promedio
 EP = 18.8
 
 with open("Flujos.csv", 'r') as flujos_csv:
@@ -41,7 +41,7 @@ for i in comunas_:
     for e in zonas_[i]:
        F_ie[ncomuna[i]][e] = int(data_flujos[ncomuna[i] - 1][ind])
        ind += 1
-
+#Flujo vehicular en comuna i en zona e
 
 with open("Potencia.csv", 'r') as potencia_csv:
     reader = csv.reader(potencia_csv)
@@ -50,7 +50,7 @@ with open("Potencia.csv", 'r') as potencia_csv:
     for i in range(len(data_potencia)):
         electrolineras_.append(data_potencia[i].pop(0))
 P_j = {j : int(data_potencia[j - 1][0]) for j in range(1, len(electrolineras_) + 1)} 
-
+#Potencia que entrega la electrolinera J
 
 with open("Necesidad_insumos.csv", 'r') as necesidad_csv:
     reader = csv.reader(necesidad_csv)
@@ -60,7 +60,7 @@ with open("Necesidad_insumos.csv", 'r') as necesidad_csv:
         if i == 0:
             insumos_ = [k for k in range(1, len(data_necesidad[i]) + 1)]
 NI_jK = {j : {k : int(data_necesidad[i - 1][k - 1]) for k in insumos_} for j in range(1, len(electrolineras_) + 1)} 
-
+#Cantidad necesaria de insumos
 
 with open("Espacio_electrolinera.csv", 'r') as espacio_e_csv:
     reader = csv.reader(espacio_e_csv)
@@ -68,13 +68,13 @@ with open("Espacio_electrolinera.csv", 'r') as espacio_e_csv:
     for i in range(len(data_potencia)):
         data_espacio_e[i].pop(0)
 E_j = {j : int(data_espacio_e[j - 1][0]) for j in range(1, len(electrolineras_) + 1)}
-
+#Espacio que requiere una electrolinera tipo j
 
 with open("Adyacencia.csv", 'r') as adyacencia_csv:
     reader = csv.reader(adyacencia_csv)
     data_adyacencia = list(reader)
 A_eh = {e : {h: float(data_adyacencia[e - 1][h - 1]) for h in range(1, len(data_adyacencia) + 1)} for e in range(1, len(data_adyacencia) + 1)}
-
+#Matriz de adyacencia
 
 with open("Necesidad_trabajadores.csv", 'r') as necesidad_t_csv:
     reader = csv.reader(necesidad_t_csv)
@@ -82,7 +82,7 @@ with open("Necesidad_trabajadores.csv", 'r') as necesidad_t_csv:
     for i in range(len(data_necesidad_t)):
         data_necesidad_t[i].pop(0)
 NE_j = {j : int(data_necesidad_t[j - 1][0]) for j in range(1, len(data_necesidad_t) + 1)} 
-
+#Mano de obra necesario
 
 with open("Tiempo_demora.csv", 'r') as tiempo_csv:
     reader = csv.reader(tiempo_csv)
@@ -90,7 +90,7 @@ with open("Tiempo_demora.csv", 'r') as tiempo_csv:
     for i in range(len(data_tiempo)):
         data_tiempo[i].pop(0)
 TD_j = {j : int(data_tiempo[j - 1][0]) for j in range(1, len(electrolineras_) + 1)}
-
+#Tiempo de demora de construccion de electrolinera tipo j
 
 with open("Necesidad_insumos.csv", 'r') as necesidad_csv:
     reader = csv.reader(necesidad_csv)
@@ -99,8 +99,8 @@ with open("Necesidad_insumos.csv", 'r') as necesidad_csv:
         data_necesidad[i].pop(0)
         if i == 0:
             insumos_ = [k for k in range(1, len(data_necesidad[i]) + 1)]
-CI_jK = {j : {k : int(data_necesidad[i - 1][k - 1]) for k in insumos_} for j in range(1, len(electrolineras_) + 1)} 
-
+NI_jK = {j : {k : int(data_necesidad[i - 1][k - 1]) for k in insumos_} for j in range(1, len(electrolineras_) + 1)} 
+#Costo Insumo 
 
 ED_iez = {ncomuna[i]: {e: {z: randint(1200,1800) for z in terrenos_[ncomuna[i]][e]} for e in zonas_[i]} for i in comunas_}
 
