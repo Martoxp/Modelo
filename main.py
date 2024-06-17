@@ -1,6 +1,4 @@
 #Modelo grupo 35
-import csv
-import pandas as pd
 from bases_datos import *
 
 #Conjuntos
@@ -20,12 +18,9 @@ for j in electrolineras:
                     arcos.append((j,i,e,z,t))
 
 arcos2 = [(i,e,t) for i in comunas for e in zonas[i - 1] for t in dias]
+
+
 #Generación del modelo de optimización:
-
-#print(zonas_)
-#print(terrenos_)
-#print(arcos)
-
 from gurobipy import GRB, Model, quicksum
 
 modelo = Model("Proyecto")
@@ -38,7 +33,7 @@ n = modelo.addVars(dias, vtype = GRB.INTEGER, name = "N" )
 l = modelo.addVars(insumos, dias, vtype = GRB.INTEGER, name = "L" )
 i = modelo.addVars(insumos, dias, vtype = GRB.INTEGER, name = "I" )
 tt = modelo.addVars(arcos, vtype = GRB.INTEGER, name = "T" )
-pn = modelo.addVars(arcos2, vtype = GRB.INTEGER, name = "PN" )
+pn = modelo.addVars(arcos2, vtype = GRB.CONTINUOUS, name = "PN" )
 
 #Función Objetivo
 modelo.setObjective(quicksum(quicksum(pn[i,zonas[i-1][e],dias[-1]] for e in range(len(zonas[i-1])) ) for i in comunas), GRB.MINIMIZE)
