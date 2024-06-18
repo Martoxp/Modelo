@@ -148,7 +148,7 @@ modelo.addConstrs((ED_iez[i][e][z] >= quicksum(quicksum(E_j[j]*x[j,i,e,z,tx] for
 
 
 # 13va:
-modelo.addConstrs((pn[i,e,1] == F_ie[i][e]*EP - quicksum(quicksum(P_j[j]*x[j,i,e,z,1] for z in terrenos_[i][e]) for j in electrolineras) 
+modelo.addConstrs((pn[i,e,1] == round(F_ie[i][e]*EP) - quicksum(quicksum(P_j[j]*x[j,i,e,z,1] for z in terrenos_[i][e]) for j in electrolineras) 
                   - quicksum(quicksum(quicksum(A_eh[e][h]*P_j[j]*x[j,i,e,z,1] for z in terrenos_[i][e]) for h in zonas[i-1]) for j in electrolineras) 
                   for i in comunas
                   for e in zonas[i-1]),
@@ -215,13 +215,31 @@ for i in comunas:
             Comuna = j[0]
 
     for e in zonas[i - 1]:
-        print(F_ie[i][e]*EP)
         print(f"La potencia necesitada el año 2035 en la zona {e}, perteneciente a {Comuna}, será {pn[i,e,dias[-1]].x}W")
-        if F_ie[i][e]*EP > pn[i,e,dias[-1]].x:
-            if F_ie[i][e]*EP > round(pn[i,e,dias[-1]].x, 1):
-                print(f"El valor de la potencia necesitada se ha reducido de {F_ie[i][e]*EP}W  a {pn[i,e,dias[-1]].x}W\n")
-            else:
-                print("El valor de la potencia necesitada no disminuyó significativamente, solo dismiuyó producto del efecto de las zonas adyacentes\n")
-        elif F_ie[i][e]*EP == pn[i,e,dias[-1]].x:
+        if round(F_ie[i][e]*EP) > round(pn[i,e,dias[-1]].x):
+            print(f"El valor de la potencia necesitada se ha reducido de {F_ie[i][e]*EP}W  a {pn[i,e,dias[-1]].x}W\n")
+        elif round(F_ie[i][e]*EP) == round(pn[i,e,dias[-1]].x):
+            print("El valor de la potencia necesitada no disminuyó significativamente, solo dismiuyó producto del efecto de las zonas adyacentes\n")
+        elif round(F_ie[i][e]*EP) == pn[i,e,dias[-1]].x:
             print("El valor de la potencia necesitada no disminuyó durante los 10 años de planificación\n")
+
+
+import pandas as pd
+
+excel = pd.ExcelWriter("Potencia_necesitada.xlsx")
+for t in dias:
+    tabla = []
+    for i in ncomuna.keys():
+        zon = []
+        for e in range(1,21):
+            if e not in zonas_[i]:
+                zon.append(0)
+            else:
+                zon.append(pn[ncomuna[i],e,t].x)
+        tabla.append(zon)
+    data = pd.DataFrame(tabla, columns = range(1,21), index = range(1,5))
+    data.to_excel(excel, sheet_name=f"Mes {t}", index=False)
+
+excel.close()
+
             
