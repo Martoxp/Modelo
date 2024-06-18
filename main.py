@@ -208,3 +208,20 @@ modelo.addConstrs((pn[i,e,t] >= 0
 modelo.update()
 modelo.optimize()
 
+print("\n")
+for i in comunas:
+    for j in list(ncomuna.items()):
+        if i in j:
+            Comuna = j[0]
+
+    for e in zonas[i - 1]:
+        print(F_ie[i][e]*EP)
+        print(f"La potencia necesitada el año 2035 en la zona {e}, perteneciente a {Comuna}, será {pn[i,e,dias[-1]].x}W")
+        if F_ie[i][e]*EP > pn[i,e,dias[-1]].x:
+            if F_ie[i][e]*EP > round(pn[i,e,dias[-1]].x, 1):
+                print(f"El valor de la potencia necesitada se ha reducido de {F_ie[i][e]*EP}W  a {pn[i,e,dias[-1]].x}W\n")
+            else:
+                print("El valor de la potencia necesitada no disminuyó significativamente, solo dismiuyó producto del efecto de las zonas adyacentes\n")
+        elif F_ie[i][e]*EP == pn[i,e,dias[-1]].x:
+            print("El valor de la potencia necesitada no disminuyó durante los 10 años de planificación\n")
+            
