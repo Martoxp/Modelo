@@ -32,8 +32,8 @@ y = modelo.addVars(arcos, vtype = GRB.BINARY, name = "Y" )
 n = modelo.addVars(dias, vtype = GRB.CONTINUOUS, name = "N" ) # Dinero disponible
 l = modelo.addVars(insumos, dias, vtype = GRB.INTEGER, name = "L" )
 i = modelo.addVars(insumos, dias, vtype = GRB.INTEGER, name = "I" )
-tt = modelo.addVars(arcos, vtype = GRB.INTEGER, name = "T" )
-pn = modelo.addVars(arcos2, vtype = GRB.CONTINUOUS, name = "PN" )
+tt = modelo.addVars(arcos, vtype = GRB.INTEGER, name = "T" ) 
+pn = modelo.addVars(arcos2, vtype = GRB.CONTINUOUS, name = "PN" ) #Potencia necesitada
 
 #Función Objetivo
 modelo.setObjective(quicksum(quicksum(pn[i,zonas[i-1][e],dias[-1]] for e in range(len(zonas[i-1])) ) for i in comunas), GRB.MINIMIZE)
@@ -223,6 +223,13 @@ for i in comunas:
         elif round(F_ie[i][e]*EP) == pn[i,e,dias[-1]].x:
             print("El valor de la potencia necesitada no disminuyó durante los 10 años de planificación\n")
 
+#for j in electrolineras:
+#    for i in comunas:
+#         for e in zonas:
+#              for z in terrenos:
+#                   for t in dias:
+#                       print(f'El día {t} se construyeron {tt[j,i,e,z,t]} cantidad de electrolineras en la comuna {i}')
+         
 
 import pandas as pd
 meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
@@ -242,4 +249,20 @@ for t in dias:
 
 excel.close()
 
-            
+excel2 = pd.ExcelWriter("PN_anualmente.xlsx")
+for t in dias:
+    if (t - 1)%12 == 0:
+        tabla = [[0 for e in range(1,21)] for i in comunas]
+    for i in ncomuna.keys():
+        for e in range(20):
+            if e + 1  in zonas_[i]:
+                tabla[ncomuna[i] -1][e] += pn[ncomuna[i],e + 1,t].x
+    if (t - 1)%12 == 11:
+        for i in range(len(tabla)):
+            for e in range(len(tabla[0])):
+                tabla[i][e] = tabla[i][e]/12
+        data = pd.DataFrame(tabla, columns = range(1,21), index = range(1,5))
+        data.to_excel(excel2, sheet_name=f"{2025 + (t-1)//12}", index=True)
+excel2.close()
+
+# Electrolineras construidas para el 2035
