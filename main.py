@@ -26,10 +26,10 @@ from gurobipy import GRB, Model, quicksum
 modelo = Model("Proyecto")
 
 #Variables
-x = modelo.addVars(arcos, vtype = GRB.INTEGER, name = "X" )
-w = modelo.addVars(arcos2, vtype = GRB.INTEGER, name = "W" )
+x = modelo.addVars(arcos, vtype = GRB.INTEGER, name = "X" ) # Cantidad construida
+w = modelo.addVars(arcos2, vtype = GRB.INTEGER, name = "W" ) # 
 y = modelo.addVars(arcos, vtype = GRB.BINARY, name = "Y" )
-n = modelo.addVars(dias, vtype = GRB.INTEGER, name = "N" )
+n = modelo.addVars(dias, vtype = GRB.CONTINUOUS, name = "N" ) # Dinero disponible
 l = modelo.addVars(insumos, dias, vtype = GRB.INTEGER, name = "L" )
 i = modelo.addVars(insumos, dias, vtype = GRB.INTEGER, name = "I" )
 tt = modelo.addVars(arcos, vtype = GRB.INTEGER, name = "T" )
@@ -217,15 +217,15 @@ for i in comunas:
     for e in zonas[i - 1]:
         print(f"La potencia necesitada el año 2035 en la zona {e}, perteneciente a {Comuna}, será {pn[i,e,dias[-1]].x}W")
         if round(F_ie[i][e]*EP) > round(pn[i,e,dias[-1]].x):
-            print(f"El valor de la potencia necesitada se ha reducido de {F_ie[i][e]*EP}W  a {pn[i,e,dias[-1]].x}W\n")
+            print(f"El valor de la potencia necesitada se ha reducido de {round(F_ie[i][e]*EP)}W  a {pn[i,e,dias[-1]].x}W\n")
         elif round(F_ie[i][e]*EP) == round(pn[i,e,dias[-1]].x):
-            print("El valor de la potencia necesitada no disminuyó significativamente, solo dismiuyó producto del efecto de las zonas adyacentes\n")
+            print("El valor de la potencia necesitada no disminuyó significativamente, solo disminuyó producto del efecto de las zonas adyacentes\n")
         elif round(F_ie[i][e]*EP) == pn[i,e,dias[-1]].x:
             print("El valor de la potencia necesitada no disminuyó durante los 10 años de planificación\n")
 
 
 import pandas as pd
-
+meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
 excel = pd.ExcelWriter("Potencia_necesitada.xlsx")
 for t in dias:
     tabla = []
@@ -238,7 +238,7 @@ for t in dias:
                 zon.append(pn[ncomuna[i],e,t].x)
         tabla.append(zon)
     data = pd.DataFrame(tabla, columns = range(1,21), index = range(1,5))
-    data.to_excel(excel, sheet_name=f"Mes {t}", index=False)
+    data.to_excel(excel, sheet_name=f"{meses[(t - 1)%12]} del {2025 + (t-1)//12}", index=True)
 
 excel.close()
 
