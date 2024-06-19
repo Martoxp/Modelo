@@ -208,6 +208,8 @@ modelo.addConstrs((pn[i,e,t] >= 0
 modelo.update()
 modelo.optimize()
 
+#representacion de datos y generación de archivos
+
 print("\n")
 for i in comunas:
     for j in list(ncomuna.items()):
@@ -223,13 +225,16 @@ for i in comunas:
         elif round(F_ie[i][e]*EP) == pn[i,e,dias[-1]].x:
             print("El valor de la potencia necesitada no disminuyó durante los 10 años de planificación\n")
 
-#for j in electrolineras:
-#    for i in comunas:
-#         for e in zonas:
-#              for z in terrenos:
-#                   for t in dias:
-#                       print(f'El día {t} se construyeron {tt[j,i,e,z,t]} cantidad de electrolineras en la comuna {i}')
-         
+
+for j in electrolineras:
+    for i in comunas:
+         for e in zonas[i-1]:
+              for z in terrenos_[i][e]:
+                   for t in dias:
+                       if int(abs(x[j,i,e,z,t].x)) != 0:
+                           print(f'El día {t} se construyeron {x[j,i,e,z,t].x} cantidad de electrolineras tipo {j} en la comuna {i}')
+
+
 
 import pandas as pd
 meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
@@ -246,7 +251,6 @@ for t in dias:
         tabla.append(zon)
     data = pd.DataFrame(tabla, columns = range(1,21), index = range(1,5))
     data.to_excel(excel, sheet_name=f"{meses[(t - 1)%12]} del {2025 + (t-1)//12}", index=True)
-
 excel.close()
 
 excel2 = pd.ExcelWriter("PN_anualmente.xlsx")
@@ -265,4 +269,20 @@ for t in dias:
         data.to_excel(excel2, sheet_name=f"{2025 + (t-1)//12}", index=True)
 excel2.close()
 
+#x[j,i,e,z,t]
+excel3 = pd.ExcelWriter("Electrolineras_contruidas.xlsx")
+for j in electrolineras:
+    tabla = [[0 for e in range(1,21)] for i in comunas]
+    for i in ncomuna.keys():
+        for e in range(1,21):
+            if e in zonas_[i]:
+                suma = 0
+                for t in dias:
+                    for z in terrenos_[ncomuna[i]][e]:
+                        suma += x[j,ncomuna[i],e,z,t].x
+                tabla[ncomuna[i] - 1][e - 1] = suma
+        
+    data = pd.DataFrame(tabla, columns = range(1,21), index = range(1,5))
+    data.to_excel(excel3, sheet_name=f"Electrolinera tipo {j}", index=True)
+excel3.close()
 # Electrolineras construidas para el 2035
