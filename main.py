@@ -232,7 +232,7 @@ for j in electrolineras:
               for z in terrenos_[i][e]:
                    for t in dias:
                        if int(abs(x[j,i,e,z,t].x)) != 0:
-                           print(f'El día {t} se construyeron {x[j,i,e,z,t].x} cantidad de electrolineras tipo {j} en la comuna {i}')
+                           print(f'El día {t} se construyeron {x[j,i,e,z,t].x} cantidad de electrolineras tipo {j} en la zona {e}')
 
 
 
@@ -271,8 +271,8 @@ excel2.close()
 
 #x[j,i,e,z,t]
 excel3 = pd.ExcelWriter("Electrolineras_contruidas.xlsx")
+tabla = [[0 for e in range(1,21)] for j in electrolineras]
 for j in electrolineras:
-    tabla = [[0 for e in range(1,21)] for i in comunas]
     for i in ncomuna.keys():
         for e in range(1,21):
             if e in zonas_[i]:
@@ -280,9 +280,9 @@ for j in electrolineras:
                 for t in dias:
                     for z in terrenos_[ncomuna[i]][e]:
                         suma += x[j,ncomuna[i],e,z,t].x
-                tabla[ncomuna[i] - 1][e - 1] = suma
+                tabla[j - 1][e - 1] = suma
         
-    data = pd.DataFrame(tabla, columns = range(1,21), index = range(1,5))
-    data.to_excel(excel3, sheet_name=f"Electrolinera tipo {j}", index=True)
+data = pd.DataFrame(tabla, columns = range(1,21), index = range(1,4))
+data.to_excel(excel3, index=True)
 excel3.close()
 # Electrolineras construidas para el 2035
