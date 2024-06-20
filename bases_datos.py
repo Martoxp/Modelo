@@ -122,9 +122,9 @@ CN_k = {k : int(data_capacidad[k - 1][0]) for k in insumos_}
 #C_jit
 
 #Costo electrolinera en pesos tipo j 
-Cj = [71991759,56644034,40138535]
-#Factor Comunal Arbitrario
-Fi = [0.8 , 1.2 , 1.1 , 1]
+Cj = [53291759,37944034,21438535]
+#Factor Comunal (VALOR UF/M^2)
+Fi = [0.74 , 1 , 0.99 , 0.73]
 #Factor Anual de infiacion
 Inflacion = 1.03
 
@@ -140,37 +140,4 @@ for k in insumos_:
     for t in range(1, 121):
         if t > 12:
             restar = 12*((t-1)//12)
-        CI_kt[k][t] = Variacion_por_estacion[int((t - 1 - restar)//3)]*Precio_base_k[k-1]*(Inflacion**((t-1)//12))
-
-#print("Potencia de electrolineras:", P_j)
-#Tipo 1 entrega: 2 cargadores maxima potencia (50-79kW)
-#Tipo 2 entrega: 4 cargadores media potencia (22-49kW) #Sacar promedio y sumar cantidad???
-#Tipo 3 entrega: 8 cargadores baja potencia (11-21kW)
-
-#print("Alfa:",Alfa) #Primer informe 5000 mil millones
-
-#print("Costos base electrolinera:",C_jit) #la muerte chaval
-
-#print("Necesidad de trabajadores:",NE_j) # falta
-
-#print("Tiempo demora:",TD_j) #falta
-
-#print("Flujos:",F_ie)  #Excel juanisimo, Definir comunas????
-
-#print("Costos Insumos:",CI_kt) #Costo insumos en excel y aplicar su variacion del tiempo con diccionarios
-
-#print("CN_k",CN_k) #Falta
-
-#print("Necesidad:",NI_jK) #falta¿
-
-#print("Trabajadores de empresa:",TE) #4560 trabajdores en promedio
-
-#print("Big M:", M) #Big M
-
-#print("Adyacencia:",A_eh)#pura matriz de zonas
-
-#print("Espacio disponible:",ED_iez) #Suelo vacante por municipio¿
-
-#print("Espacio de electrolineras:", E_j) #Espacio que requiere una electroliner en m^2
-
-#print("Energía promedio autos:", EP) #Energia promedio que necesita un auto electrico en kW/km
+        CI_kt[k][t] = int(Variacion_por_estacion[int((t - 1 - restar)//3)]*Precio_base_k[k-1]*(Inflacion**((t-1)//12)))
