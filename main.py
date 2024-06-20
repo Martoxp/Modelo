@@ -219,7 +219,7 @@ for i in comunas:
     for e in zonas[i - 1]:
         print(f"La potencia necesitada el año 2035 en la zona {e}, perteneciente a {Comuna}, será {pn[i,e,dias[-1]].x}W")
         if round(F_ie[i][e]*EP) > round(pn[i,e,dias[-1]].x):
-            print(f"El valor de la potencia necesitada se ha reducido de {round(F_ie[i][e]*EP)}W  a {pn[i,e,dias[-1]].x}W\n")
+            print(f"El valor de la potencia necesitada se ha reducido de {round(F_ie[i][e]*EP)}kW  a {pn[i,e,dias[-1]].x}kW\n")
         elif round(F_ie[i][e]*EP) == round(pn[i,e,dias[-1]].x):
             print("El valor de la potencia necesitada no disminuyó significativamente, solo disminuyó producto del efecto de las zonas adyacentes\n")
         elif round(F_ie[i][e]*EP) == pn[i,e,dias[-1]].x:
@@ -234,7 +234,7 @@ for j in electrolineras:
                        if int(abs(x[j,i,e,z,t].x)) != 0:
                            print(f'El día {t} se construyeron {x[j,i,e,z,t].x} cantidad de electrolineras tipo {j} en la zona {e}')
 
-
+print(f"Del presupuesto inicial, {Alfa} pesos, se ocupo {Alfa - n[dias[-1]].x} pesos")
 
 import pandas as pd
 meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]

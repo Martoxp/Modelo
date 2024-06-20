@@ -1,5 +1,8 @@
 import csv
-from random import randint
+from random import randint, seed
+
+
+seed(700)
 
 #Zona de cada comuna
 zonas_ = {"Penalolen":[1,2,3,4,5,6],"LaReina":[7,8,9,10,11],"Nunoa":[12,13,14,15,16],"Macul":[17,18,19,20]}
@@ -19,10 +22,10 @@ for n in ncomuna.keys():
             lista.append(z)
         cantidad_terrenos = cantidad_terrenos + num
         terrenos_[ncomuna[n]][e] = lista
-
+print(terrenos_) 
 
 #Capital Inicial
-Alfa = 5000000000
+Alfa = 5000000000 #5.000.000.000 pesos
 #Big M
 M = 1000000000000000
 #Trabajadores de la empresa
@@ -117,14 +120,15 @@ CN_k = {k : int(data_capacidad[k - 1][0]) for k in insumos_}
 
 
 #C_jit
-#Costo electrolinera tipo j
+
+#Costo electrolinera en pesos tipo j 
 Cj = [71991759,56644034,40138535]
 #Factor Comunal Arbitrario
 Fi = [0.8 , 1.2 , 1.1 , 1]
 #Factor Anual de infiacion
 Inflacion = 1.03
 
-C_jit = {j: {i: {t : int(Cj[j - 1]*Inflacion*(1.03**((t-1)//12))) for t in range(1,121)} for i in range(1, len(comunas_) + 1)} for j in range(1, len(electrolineras_) + 1)}
+C_jit = {j: {i: {t : int(Cj[j - 1]*Fi[i - 1]*(Inflacion**((t-1)//12))) for t in range(1,121)} for i in range(1, len(comunas_) + 1)} for j in range(1, len(electrolineras_) + 1)}
 
 
 Precio_base_k = [200000,500000,100000,2000000,300000,100000,3000000,17000000,50000000,50000,500000,1500000,500000,200000,75000]
