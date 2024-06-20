@@ -28,7 +28,7 @@ modelo = Model("Proyecto")
 #Variables
 x = modelo.addVars(arcos, vtype = GRB.INTEGER, name = "X" ) # Cantidad construida
 w = modelo.addVars(arcos2, vtype = GRB.INTEGER, name = "W" ) # 
-y = modelo.addVars(arcos, vtype = GRB.BINARY, name = "Y" )
+#y = modelo.addVars(arcos, vtype = GRB.BINARY, name = "Y" )
 n = modelo.addVars(dias, vtype = GRB.CONTINUOUS, name = "N" ) # Dinero disponible
 l = modelo.addVars(insumos, dias, vtype = GRB.INTEGER, name = "L" )
 i = modelo.addVars(insumos, dias, vtype = GRB.INTEGER, name = "I" )
@@ -48,7 +48,7 @@ modelo.addConstrs((tt[j,i,e,z, 1] == 0
                    for e in zonas[i-1] 
                    for z in terrenos_[i][e]), name = f"No hay electrolineras terminadas el primer día")
 
-# 2da: Solo 1 sembrado por cuadrante
+# 2da: 
 modelo.addConstrs((tt[j,i,e,z, t + TD_j[j]] == x[j,i,e,z,t] 
                    for j in electrolineras 
                    for i in comunas 
@@ -106,8 +106,16 @@ modelo.addConstrs((CN_k[k] >= i[k,t]
                    name = f"Cantidad de insumos guardados debe caber en la bodega")
 
 
-# 8va: 
-modelo.addConstrs((y[j,i,e,z,t]  <= max(0, dias[-1] + 1 - t - TD_j[j]) 
+#modelo.addConstrs((Y_jiezt[j][i][e][z][t]  <= max(0, dias[-1] + 1 - t - TD_j[j]) 
+#                   for j in electrolineras
+#                   for i in comunas
+#                   for e in zonas[i-1] 
+#                   for z in terrenos_[i][e]
+#                   for t in dias), 
+#                   name = f"")
+
+# 8va:
+modelo.addConstrs((x[j,i,e,z,t]  <= M*Y_jiezt[j][i][e][z][t]
                    for j in electrolineras
                    for i in comunas
                    for e in zonas[i-1] 
@@ -115,17 +123,8 @@ modelo.addConstrs((y[j,i,e,z,t]  <= max(0, dias[-1] + 1 - t - TD_j[j])
                    for t in dias), 
                    name = f"")
 
-# 9na:
-modelo.addConstrs((x[j,i,e,z,t]  <= M*y[j,i,e,z,t]
-                   for j in electrolineras
-                   for i in comunas
-                   for e in zonas[i-1] 
-                   for z in terrenos_[i][e]
-                   for t in dias), 
-                   name = f"")
 
-
-# 10ma: 
+# 9na: 
 modelo.addConstrs((w[i,e,t] == quicksum(NE_j[j]*quicksum(quicksum(x[j,i,e,z,tx] - tt[j,i,e,z,tx] for z in terrenos_[i][e]) for tx in dias[:t]) for j in electrolineras) 
                                         for i in comunas 
                                         for e in zonas[i-1]
@@ -133,13 +132,13 @@ modelo.addConstrs((w[i,e,t] == quicksum(NE_j[j]*quicksum(quicksum(x[j,i,e,z,tx] 
                                         name = f"")
 
 
-# 11va:
+# 10ma:
 modelo.addConstrs((TE >= quicksum(quicksum(w[i,e,t] for e in zonas[i-1]) for i in comunas)
                    for t in dias),
                    name = f"")
 
 
-# 12va:
+# 11va:
 modelo.addConstrs((ED_iez[i][e][z] >= quicksum(quicksum(E_j[j]*x[j,i,e,z,tx] for j in electrolineras) for tx in dias[:t])
                   for i in comunas
                   for e in zonas[i-1] 
@@ -147,7 +146,7 @@ modelo.addConstrs((ED_iez[i][e][z] >= quicksum(quicksum(E_j[j]*x[j,i,e,z,tx] for
                   name = f"")
 
 
-# 13va:
+# 12va:
 modelo.addConstrs((pn[i,e,1] == round(F_ie[i][e]*EP) - quicksum(quicksum(P_j[j]*x[j,i,e,z,1] for z in terrenos_[i][e]) for j in electrolineras) 
                   - quicksum(quicksum(quicksum(A_eh[e][h]*P_j[j]*x[j,i,e,z,1] for z in terrenos_[i][e]) for h in zonas[i-1]) for j in electrolineras) 
                   for i in comunas
@@ -156,7 +155,7 @@ modelo.addConstrs((pn[i,e,1] == round(F_ie[i][e]*EP) - quicksum(quicksum(P_j[j]*
 
 
 
-# 14va:
+# 13va:
 modelo.addConstrs((pn[i,e,t] == pn[i,e,t-1] - quicksum(quicksum(quicksum(P_j[j]*x[j,i,e,z,tx] for z in terrenos_[i][e]) for tx in dias[:t]) for j in electrolineras) 
                   - quicksum(quicksum(quicksum(quicksum(A_eh[e][h]*P_j[j]*x[j,i,e,z,tx] for z in terrenos_[i][e]) for h in zonas[i-1]) for tx in dias[:t]) for j in electrolineras) 
                   for i in comunas
@@ -225,16 +224,16 @@ for i in comunas:
         elif round(F_ie[i][e]*EP) == pn[i,e,dias[-1]].x:
             print("El valor de la potencia necesitada no disminuyó durante los 10 años de planificación\n")
 
-
-for j in electrolineras:
-    for i in comunas:
-         for e in zonas[i-1]:
-              for z in terrenos_[i][e]:
-                   for t in dias:
+for t in dias:
+    for j in electrolineras:
+        for i in comunas:
+            for e in zonas[i-1]:
+                for z in terrenos_[i][e]:
                        if int(abs(x[j,i,e,z,t].x)) != 0:
-                           print(f'El día {t} se construyeron {x[j,i,e,z,t].x} cantidad de electrolineras tipo {j} en la zona {e}')
+                           print(f'El mes {t} se construyeron {x[j,i,e,z,t].x} cantidad de electrolineras tipo {j} en la zona {e}')
+    print("\n")
 
-print(f"Del presupuesto inicial, {Alfa} pesos, se ocupo {Alfa - n[dias[-1]].x} pesos")
+print(f"\nDel presupuesto inicial, {Alfa} pesos, se ocupo {Alfa - n[dias[-1]].x} pesos")
 
 import pandas as pd
 meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]

@@ -22,7 +22,7 @@ for n in ncomuna.keys():
             lista.append(z)
         cantidad_terrenos = cantidad_terrenos + num
         terrenos_[ncomuna[n]][e] = lista
-print(terrenos_) 
+
 
 #Capital Inicial
 Alfa = 5000000000 #5.000.000.000 pesos
@@ -141,3 +141,7 @@ for k in insumos_:
         if t > 12:
             restar = 12*((t-1)//12)
         CI_kt[k][t] = int(Variacion_por_estacion[int((t - 1 - restar)//3)]*Precio_base_k[k-1]*(Inflacion**((t-1)//12)))
+
+
+Y_jiezt = {j:{ncomuna[i]:{e:{z:{t: 1 if max(0, 121 - t - TD_j[j]) > 0 else 0 for t in range(1,121)} for z in terrenos_[ncomuna[i]][e]} for e in zonas_[i]} for i in comunas_} for j in range(1, len(electrolineras_) + 1)}
+#print(Y_jiezt)
