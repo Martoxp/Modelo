@@ -147,7 +147,7 @@ for k in insumos_:
 #Tipo 2 entrega: 4 cargadores media potencia (22-49kW) #Sacar promedio y sumar cantidad???
 #Tipo 3 entrega: 8 cargadores baja potencia (11-21kW)
 
-#print("Alfa:",Alfa) #Primer informe 5000mil millones
+#print("Alfa:",Alfa) #Primer informe 5000 mil millones
 
 #print("Costos base electrolinera:",C_jit) #la muerte chaval
 
@@ -174,7 +174,3 @@ for k in insumos_:
 #print("Espacio de electrolineras:", E_j) #Espacio que requiere una electroliner en m^2
 
 #print("Energía promedio autos:", EP) #Energia promedio que necesita un auto electrico en kW/km
-
-
-
-
