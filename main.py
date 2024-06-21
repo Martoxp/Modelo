@@ -148,7 +148,7 @@ modelo.addConstrs((ED_iez[i][e][z] >= quicksum(quicksum(E_j[j]*x[j,i,e,z,tx] for
 
 # 12va:
 modelo.addConstrs((pn[i,e,1] == round(F_ie[i][e]*EP) - quicksum(quicksum(P_j[j]*x[j,i,e,z,1] for z in terrenos_[i][e]) for j in electrolineras) 
-                  - quicksum(quicksum(quicksum(A_eh[e][h]*P_j[j]*x[j,i,e,z,1] for z in terrenos_[i][e]) for h in zonas[i-1]) for j in electrolineras) 
+                  - quicksum(quicksum(quicksum(A_he[h][e]*P_j[j]*x[j,i,h,z,1] for z in terrenos_[i][h]) for h in zonas[i-1]) for j in electrolineras) 
                   for i in comunas
                   for e in zonas[i-1]),
                   name = f"")
@@ -157,7 +157,7 @@ modelo.addConstrs((pn[i,e,1] == round(F_ie[i][e]*EP) - quicksum(quicksum(P_j[j]*
 
 # 13va:
 modelo.addConstrs((pn[i,e,t] == pn[i,e,t-1] - quicksum(quicksum(quicksum(P_j[j]*x[j,i,e,z,tx] for z in terrenos_[i][e]) for tx in dias[:t]) for j in electrolineras) 
-                  - quicksum(quicksum(quicksum(quicksum(A_eh[e][h]*P_j[j]*x[j,i,e,z,tx] for z in terrenos_[i][e]) for h in zonas[i-1]) for tx in dias[:t]) for j in electrolineras) 
+                  - quicksum(quicksum(quicksum(quicksum(A_he[h][e]*P_j[j]*x[j,i,h,z,tx] for z in terrenos_[i][h]) for h in zonas[i-1]) for tx in dias[:t]) for j in electrolineras) 
                   for i in comunas
                   for e in zonas[i-1]
                   for t in dias[1:]),
@@ -216,12 +216,10 @@ for i in comunas:
             Comuna = j[0]
 
     for e in zonas[i - 1]:
-        print(f"La potencia necesitada el año 2035 en la zona {e}, perteneciente a {Comuna}, será {pn[i,e,dias[-1]].x}kW (originalmente {round(F_ie[i][e]*EP)} kW)")
-        if round(F_ie[i][e]*EP) > round(pn[i,e,dias[-1]].x):
+        print(f"La potencia necesitada el año 2035 en la zona {e}, perteneciente a {Comuna}, será {pn[i,e,dias[-1]].x}kW")
+        if round(F_ie[i][e]*EP) >= round(pn[i,e,dias[-1]].x):
             print(f"El valor de la potencia necesitada se ha reducido de {round(F_ie[i][e]*EP)}kW  a {pn[i,e,dias[-1]].x}kW\n")
-        elif round(F_ie[i][e]*EP) == round(pn[i,e,dias[-1]].x):
-            print("El valor de la potencia necesitada no disminuyó significativamente, solo disminuyó producto del efecto de las zonas adyacentes\n")
-        elif round(F_ie[i][e]*EP) == pn[i,e,dias[-1]].x:
+        elif float(round(F_ie[i][e]*EP)) == pn[i,e,dias[-1]].x:
             print("El valor de la potencia necesitada no disminuyó durante los 10 años de planificación\n")
 
 for t in dias:

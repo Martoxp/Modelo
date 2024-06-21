@@ -79,7 +79,7 @@ E_j = {j : int(data_espacio_e[j - 1][0]) for j in range(1, len(electrolineras_) 
 with open("Adyacencia.csv", 'r') as adyacencia_csv:
     reader = csv.reader(adyacencia_csv)
     data_adyacencia = list(reader)
-A_eh = {e : {h: float(data_adyacencia[e - 1][h - 1]) for h in range(1, len(data_adyacencia) + 1)} for e in range(1, len(data_adyacencia) + 1)}
+A_he = {e : {h: float(data_adyacencia[e - 1][h - 1]) for h in range(1, len(data_adyacencia) + 1)} for e in range(1, len(data_adyacencia) + 1)}
 
 
 with open("Necesidad_trabajadores.csv", 'r') as necesidad_t_csv:
@@ -144,5 +144,17 @@ for k in insumos_:
 
 
 Y_jiezt = {j:{ncomuna[i]:{e:{z:{t: 1 if max(0, 121 - t - TD_j[j]) > 0 else 0 for t in range(1,121)} for z in terrenos_[ncomuna[i]][e]} for e in zonas_[i]} for i in comunas_} for j in range(1, len(electrolineras_) + 1)}
-print(P_j)
-print(A_eh)
+print(A_he[8][11])
+print(A_he[4][11])
+print(A_he[12][11])
+print(A_he[10][11])
+
+print("\n")
+
+print(A_he[4][8])
+print(A_he[5][8])
+print(A_he[6][8])
+print(A_he[7][8])
+print(A_he[9][8])
+print(A_he[10][8])
+print(A_he[11][8])
