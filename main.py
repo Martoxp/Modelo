@@ -231,9 +231,14 @@ for t in dias:
                 for z in terrenos_[i][e]:
                        if int(abs(x[j,i,e,z,t].x)) != 0:
                            print(f'El mes {t} se construyeron {x[j,i,e,z,t].x} cantidad de electrolineras tipo {j} en la zona {e}')
-    print("\n")
 
 print(f"\nDel presupuesto inicial, {Alfa} pesos, se ocupo {Alfa - n[dias[-1]].x} pesos")
+
+potencia_inicial = sum(round(F_ie[i][e]*EP) for i in comunas for e in zonas[i - 1])
+potencia_final = sum(pn[i,e,dias[-1]].x for i in comunas for e in zonas[i - 1])
+
+print(f"\nLa potencia necesitada entre las 4 comunas se redujo de {potencia_inicial}kW a {potencia_final}kW")
+print(f"Es decir, se redujo de {potencia_inicial-potencia_final}kW")
 
 import pandas as pd
 meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
@@ -253,23 +258,29 @@ for t in dias:
 excel.close()
 
 excel2 = pd.ExcelWriter("PN_anualmente.xlsx")
-anos = [[] for i in ncomuna.keys()]
+anos = [[] for i in range(5)]
 for t in dias:
-    if (t - 1)%12 == 0:
-        tabla = [[0 for e in range(1,21)] for i in comunas]
-    for i in ncomuna.keys():
-        for e in range(20):
-            if e + 1  in zonas_[i]:
-                tabla[ncomuna[i] -1][e] += pn[ncomuna[i],e + 1,t].x
     if (t - 1)%12 == 11:
-        for i in ncomuna.keys():
+        for i in comunas:
             suma = 0
-            for e in zonas_[i]:
-                suma += tabla[ncomuna[i] -1][e-1]
-            suma = suma/(12*len(zonas_[i]))
-            anos[ncomuna[i]-1].append(suma)
+            for e in zonas[i-1]:
+                suma += pn[i,e,t].x
+            anos[i-1].append(suma)
+            if i == 4:
+                total = 0
+                for i in comunas:
+                    total += anos[i-1][-1]
+                anos[4].append(total)
+for i in comunas:
+    suma = sum(round(F_ie[i][e]*EP) for e in zonas[i - 1])
+    anos[i-1].insert(0,suma)
+    if i == 4:
+        total = sum(anos[i-1][0] for i in comunas)
+        anos[4].insert(0,total)
+
 ind_anos = [2025 + i for i in range(10)]
-data = pd.DataFrame(anos, columns = ind_anos, index = range(1,5))
+ind_anos.insert(0,"Previo al proyecto")
+data = pd.DataFrame(anos, columns = ind_anos, index = [1,2,3,4,"Necesidad total"])
 data.to_excel(excel2, index=True)
 excel2.close()
 
