@@ -216,7 +216,7 @@ for i in comunas:
             Comuna = j[0]
 
     for e in zonas[i - 1]:
-        print(f"La potencia necesitada el año 2035 en la zona {e}, perteneciente a {Comuna}, será {pn[i,e,dias[-1]].x}W")
+        print(f"La potencia necesitada el año 2035 en la zona {e}, perteneciente a {Comuna}, será {pn[i,e,dias[-1]].x}kW (originalmente {round(F_ie[i][e]*EP)} kW)")
         if round(F_ie[i][e]*EP) > round(pn[i,e,dias[-1]].x):
             print(f"El valor de la potencia necesitada se ha reducido de {round(F_ie[i][e]*EP)}kW  a {pn[i,e,dias[-1]].x}kW\n")
         elif round(F_ie[i][e]*EP) == round(pn[i,e,dias[-1]].x):

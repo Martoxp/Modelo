@@ -144,4 +144,5 @@ for k in insumos_:
 
 
 Y_jiezt = {j:{ncomuna[i]:{e:{z:{t: 1 if max(0, 121 - t - TD_j[j]) > 0 else 0 for t in range(1,121)} for z in terrenos_[ncomuna[i]][e]} for e in zonas_[i]} for i in comunas_} for j in range(1, len(electrolineras_) + 1)}
-#print(Y_jiezt)
+print(P_j)
+print(A_eh)
