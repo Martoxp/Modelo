@@ -253,6 +253,7 @@ for t in dias:
 excel.close()
 
 excel2 = pd.ExcelWriter("PN_anualmente.xlsx")
+anos = [[] for i in ncomuna.keys()]
 for t in dias:
     if (t - 1)%12 == 0:
         tabla = [[0 for e in range(1,21)] for i in comunas]
@@ -261,11 +262,15 @@ for t in dias:
             if e + 1  in zonas_[i]:
                 tabla[ncomuna[i] -1][e] += pn[ncomuna[i],e + 1,t].x
     if (t - 1)%12 == 11:
-        for i in range(len(tabla)):
-            for e in range(len(tabla[0])):
-                tabla[i][e] = tabla[i][e]/12
-        data = pd.DataFrame(tabla, columns = range(1,21), index = range(1,5))
-        data.to_excel(excel2, sheet_name=f"{2025 + (t-1)//12}", index=True)
+        for i in ncomuna.keys():
+            suma = 0
+            for e in zonas_[i]:
+                suma += tabla[ncomuna[i] -1][e-1]
+            suma = suma/(12*len(zonas_[i]))
+            anos[ncomuna[i]-1].append(suma)
+ind_anos = [2025 + i for i in range(10)]
+data = pd.DataFrame(anos, columns = ind_anos, index = range(1,5))
+data.to_excel(excel2, index=True)
 excel2.close()
 
 #x[j,i,e,z,t]
