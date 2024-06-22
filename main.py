@@ -228,7 +228,7 @@ for t in dias:
             for e in zonas[i-1]:
                 for z in terrenos_[i][e]:
                        if int(abs(x[j,i,e,z,t].x)) != 0:
-                           print(f'El mes {t} se construyeron {x[j,i,e,z,t].x} cantidad de electrolineras tipo {j} en la zona {e}')
+                           print(f'El mes {t} se construyeron {x[j,i,e,z,t].x} electrolineras tipo {j} en la zona {e}')
 
 print(f"\nDel presupuesto inicial, {Alfa} pesos, se ocupo {Alfa - n[dias[-1]].x} pesos")
 
@@ -236,9 +236,12 @@ potencia_inicial = sum(round(F_ie[i][e]*EP) for i in comunas for e in zonas[i - 
 potencia_final = sum(pn[i,e,dias[-1]].x for i in comunas for e in zonas[i - 1])
 
 print(f"\nLa potencia necesitada entre las 4 comunas se redujo de {potencia_inicial}kW a {potencia_final}kW")
-print(f"Es decir, se redujo de {potencia_inicial-potencia_final}kW")
+print(f"Es decir, se redujo en {potencia_inicial-potencia_final}kW")
 
 import pandas as pd
+
+# Genera un archivo excel que muestra la potencia necesitada en cada zona de cada comuna
+# en cada mes que dura el proyecto.
 meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
 excel = pd.ExcelWriter("Potencia_necesitada.xlsx")
 for t in dias:
@@ -255,6 +258,8 @@ for t in dias:
     data.to_excel(excel, sheet_name=f"{meses[(t - 1)%12]} del {2025 + (t-1)//12}", index=True)
 excel.close()
 
+# Genera un archivo excel que muestra la potencia necesitada en cada comuna, y la potencia 
+# necesitada entre las 4 comunas, a final de cada año. 
 excel2 = pd.ExcelWriter("PN_anualmente.xlsx")
 anos = [[] for i in range(5)]
 for t in dias:
@@ -282,7 +287,8 @@ data = pd.DataFrame(anos, columns = ind_anos, index = [1,2,3,4,"Necesidad total"
 data.to_excel(excel2, index=True)
 excel2.close()
 
-#x[j,i,e,z,t]
+# Genera archivo excel que muestra, por cada tipo, la cantidad de electrolineras 
+# construidas por zona
 excel3 = pd.ExcelWriter("Electrolineras_contruidas.xlsx")
 tabla = [[0 for e in range(1,21)] for j in electrolineras]
 for j in electrolineras:
